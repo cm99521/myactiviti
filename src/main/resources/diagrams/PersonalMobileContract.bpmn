@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="personalMobileContract" name="Personal Mobile Contract" isExecutable="true">
+    <startEvent id="startevent1" name="Start">
+      <extensionElements>
+        <activiti:formProperty id="customerNumber" name="Customer Number" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="contractType" name="Contract Type" type="enum" required="true">
+          <activiti:value id="c2" name="200 Minutes"></activiti:value>
+          <activiti:value id="c4" name="400 Minutes"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <callActivity id="callCreditCheck" name="Call Standalone Sub Process" calledElement="creditCheck">
+      <documentation>enter call </documentation>
+      <extensionElements>
+        <activiti:in source="customerNumber" target="customerNumber"></activiti:in>
+        <activiti:in source="contractType" target="contractType"></activiti:in>
+        <activiti:out source="creditCheckApproved" target="creditCheckApproved"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <exclusiveGateway id="approved" name="Exclusive Gateway">
+      <documentation>the customer is approved? (${creditCheckApproved})</documentation>
+    </exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="callCreditCheck"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="callCreditCheck" targetRef="approved"></sequenceFlow>
+    <scriptTask id="sendPassToCustomer" name="Send Pass to Customer" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>out: println "sending pass to customer"</script>
+    </scriptTask>
+    <scriptTask id="sendDenialToCustomer" name="Send Denial to Customer" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>out: println "send denial to customer"</script>
+    </scriptTask>
+    <sequenceFlow id="flow3" sourceRef="approved" targetRef="sendPassToCustomer">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${creditCheckApproved == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="approved" targetRef="sendDenialToCustomer">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${creditCheckApproved == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="sendPassToCustomer" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="sendDenialToCustomer" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_personalMobileContract">
+    <bpmndi:BPMNPlane bpmnElement="personalMobileContract" id="BPMNPlane_personalMobileContract">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="197.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="840.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callCreditCheck" id="BPMNShape_callCreditCheck">
+        <omgdc:Bounds height="71.0" width="105.0" x="250.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approved" id="BPMNShape_approved">
+        <omgdc:Bounds height="40.0" width="40.0" x="460.0" y="187.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendPassToCustomer" id="BPMNShape_sendPassToCustomer">
+        <omgdc:Bounds height="55.0" width="145.0" x="630.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendDenialToCustomer" id="BPMNShape_sendDenialToCustomer">
+        <omgdc:Bounds height="55.0" width="125.0" x="630.0" y="240.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="65.0" y="214.0"></omgdi:waypoint>
+        <omgdi:waypoint x="250.0" y="205.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="355.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="480.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="480.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="267.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="267.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="702.0" y="155.0"></omgdi:waypoint>
+        <omgdi:waypoint x="857.0" y="190.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="692.0" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="857.0" y="225.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

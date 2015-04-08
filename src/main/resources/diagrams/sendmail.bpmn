@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="loanRequest" name="My process" isExecutable="true">
+    <startEvent id="theStart" name="Start">
+      <extensionElements>
+        <activiti:formProperty id="name" name="Name" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="emailAddress" name="Email Address" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="income" name="Income" type="long" required="true"></activiti:formProperty>
+        <activiti:formProperty id="loanAmount" name="Loan Amount" type="long" required="true"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="createApplication" name="Create Application" activiti:class="com.viti.activiti.task.CreateApplicationTask"></serviceTask>
+    <sequenceFlow id="flow4" sourceRef="createApplication" targetRef="sendMail"></sequenceFlow>
+    <scriptTask id="checkCredit" name="Check Credit" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>out:println "Checking credit for " + name;
+def theCheck = false;
+out:println "income=" + income;
+out:println "loanAmount=" + loanAmount;
+if((income / 2) &gt; loanAmount) {
+theCheck = true;
+}
+out:println "Checked credit for " + name + " outcome is " + theCheck;
+execution.setVariable("creditCheckOK", theCheck);</script>
+    </scriptTask>
+    <sequenceFlow id="flow5" sourceRef="theStart" targetRef="checkCredit"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="checkCredit" targetRef="createApplication"></sequenceFlow>
+    <serviceTask id="sendMail" name="Send Mail to Cliff" activiti:type="mail">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:expression>${loanApplication.emailAddress}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression>Hello ${name}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:expression>Hello ${name}, &lt;br/&gt;&lt;br/&gt;
+Test, please ignore. &lt;br/&gt;&lt;br/&gt;
+Kind Regards, &lt;br/&gt;</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow7" sourceRef="sendMail" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_loanRequest">
+    <bpmndi:BPMNPlane bpmnElement="loanRequest" id="BPMNPlane_loanRequest">
+      <bpmndi:BPMNShape bpmnElement="theStart" id="BPMNShape_theStart">
+        <omgdc:Bounds height="35.0" width="35.0" x="40.0" y="187.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="640.0" y="192.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="createApplication" id="BPMNShape_createApplication">
+        <omgdc:Bounds height="55.0" width="105.0" x="320.0" y="177.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkCredit" id="BPMNShape_checkCredit">
+        <omgdc:Bounds height="55.0" width="105.0" x="150.0" y="177.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendMail" id="BPMNShape_sendMail">
+        <omgdc:Bounds height="55.0" width="105.0" x="480.0" y="177.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="425.0" y="204.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="204.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="75.0" y="204.0"></omgdi:waypoint>
+        <omgdi:waypoint x="150.0" y="204.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="255.0" y="204.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="204.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="585.0" y="204.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="209.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

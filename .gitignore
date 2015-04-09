@@ -1,9 +1,3 @@
-<<<<<<< HEAD
 .settings
 .bpmn
 target/**/*
-=======
-.settings
-.bpmn
-target/**/*
->>>>>>> refs/remotes/origin/master

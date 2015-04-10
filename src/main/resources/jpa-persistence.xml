@@ -5,7 +5,7 @@
 	version="2.0">
 	<persistence-unit name="bookStore" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>com.viti.activiti.Book</class>
+		<class>com.viti.activiti.pojo.Book</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />

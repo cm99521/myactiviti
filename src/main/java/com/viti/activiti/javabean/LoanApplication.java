@@ -1,4 +1,4 @@
-package com.viti.activiti;
+package com.viti.activiti.javabean;
 
 import java.io.Serializable;
 

@@ -3,7 +3,7 @@ package com.viti.activiti.task;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 
-import com.viti.activiti.LoanApplication;
+import com.viti.activiti.javabean.LoanApplication;
 
 public class CreateApplicationTask implements JavaDelegate {
 

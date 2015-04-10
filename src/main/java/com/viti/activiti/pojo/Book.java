@@ -1,4 +1,4 @@
-package com.viti.activiti;
+package com.viti.activiti.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

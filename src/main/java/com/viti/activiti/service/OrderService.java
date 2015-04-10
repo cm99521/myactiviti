@@ -1,4 +1,4 @@
-package com.viti.activiti;
+package com.viti.activiti.service;
 
 import org.activiti.engine.delegate.DelegateExecution;
 

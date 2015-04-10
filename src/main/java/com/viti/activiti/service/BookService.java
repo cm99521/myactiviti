@@ -1,9 +1,11 @@
-package com.viti.activiti;
+package com.viti.activiti.service;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import com.viti.activiti.pojo.Book;
 
 
 public class BookService {

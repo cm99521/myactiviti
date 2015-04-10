@@ -56,5 +56,5 @@
 
 
 
-	<bean id="orderService" class="com.viti.activiti.OrderService" />
+	<bean id="orderService" class="com.viti.activiti.service.OrderService" />
 </beans>

@@ -11,8 +11,8 @@
       </extensionElements>
     </startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
-    <callActivity id="callCreditCheck" name="Call Standalone Sub Process" calledElement="creditCheck">
-      <documentation>enter call </documentation>
+    <callActivity id="callCreditCheck" name="Credit Check" calledElement="creditCheck">
+      <documentation>enter call</documentation>
       <extensionElements>
         <activiti:in source="customerNumber" target="customerNumber"></activiti:in>
         <activiti:in source="contractType" target="contractType"></activiti:in>
@@ -24,20 +24,16 @@
     </exclusiveGateway>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="callCreditCheck"></sequenceFlow>
     <sequenceFlow id="flow2" sourceRef="callCreditCheck" targetRef="approved"></sequenceFlow>
-    <scriptTask id="sendPassToCustomer" name="Send Pass to Customer" scriptFormat="groovy" activiti:autoStoreVariables="false">
-      <script>out: println "sending pass to customer"</script>
-    </scriptTask>
-    <scriptTask id="sendDenialToCustomer" name="Send Denial to Customer" scriptFormat="groovy" activiti:autoStoreVariables="false">
-      <script>out: println "send denial to customer"</script>
-    </scriptTask>
-    <sequenceFlow id="flow3" sourceRef="approved" targetRef="sendPassToCustomer">
+    <sequenceFlow id="flow3" sourceRef="approved" targetRef="servicetask1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${creditCheckApproved == true}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow4" sourceRef="approved" targetRef="sendDenialToCustomer">
+    <sequenceFlow id="flow4" sourceRef="approved" targetRef="servicetask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${creditCheckApproved == false}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow5" sourceRef="sendPassToCustomer" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow6" sourceRef="sendDenialToCustomer" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="servicetask1" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="servicetask2" targetRef="endevent1"></sequenceFlow>
+    <serviceTask id="servicetask1" name="Send Pass to Customer" activiti:expression="#{mailService.send(&quot;cliff.ma@unistacks.com&quot;, &quot;mobile contract is ok&quot;, &quot;i am body&quot;)}"></serviceTask>
+    <serviceTask id="servicetask2" name="Send Denial to Customer" activiti:expression="#{mailService.send(&quot;cliff.ma@unistacks.com&quot;, &quot;mobile contract is not ok&quot;, &quot;i am body&quot;)}"></serviceTask>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_personalMobileContract">
     <bpmndi:BPMNPlane bpmnElement="personalMobileContract" id="BPMNPlane_personalMobileContract">
@@ -45,45 +41,45 @@
         <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="197.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="840.0" y="190.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="710.0" y="197.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="callCreditCheck" id="BPMNShape_callCreditCheck">
-        <omgdc:Bounds height="71.0" width="105.0" x="250.0" y="170.0"></omgdc:Bounds>
+        <omgdc:Bounds height="71.0" width="105.0" x="110.0" y="179.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="approved" id="BPMNShape_approved">
-        <omgdc:Bounds height="40.0" width="40.0" x="460.0" y="187.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="340.0" y="194.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sendPassToCustomer" id="BPMNShape_sendPassToCustomer">
-        <omgdc:Bounds height="55.0" width="145.0" x="630.0" y="100.0"></omgdc:Bounds>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55.0" width="145.0" x="500.0" y="101.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sendDenialToCustomer" id="BPMNShape_sendDenialToCustomer">
-        <omgdc:Bounds height="55.0" width="125.0" x="630.0" y="240.0"></omgdc:Bounds>
+      <bpmndi:BPMNShape bpmnElement="servicetask2" id="BPMNShape_servicetask2">
+        <omgdc:Bounds height="55.0" width="125.0" x="500.0" y="249.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="65.0" y="214.0"></omgdi:waypoint>
-        <omgdi:waypoint x="250.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="214.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="355.0" y="205.0"></omgdi:waypoint>
-        <omgdi:waypoint x="460.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="215.0" y="214.0"></omgdi:waypoint>
+        <omgdi:waypoint x="340.0" y="214.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
-        <omgdi:waypoint x="480.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="194.0"></omgdi:waypoint>
         <omgdi:waypoint x="480.0" y="127.0"></omgdi:waypoint>
-        <omgdi:waypoint x="630.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="128.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
-        <omgdi:waypoint x="480.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="234.0"></omgdi:waypoint>
         <omgdi:waypoint x="480.0" y="267.0"></omgdi:waypoint>
-        <omgdi:waypoint x="630.0" y="267.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
-        <omgdi:waypoint x="702.0" y="155.0"></omgdi:waypoint>
-        <omgdi:waypoint x="857.0" y="190.0"></omgdi:waypoint>
+        <omgdi:waypoint x="572.0" y="156.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="197.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
-        <omgdi:waypoint x="692.0" y="240.0"></omgdi:waypoint>
-        <omgdi:waypoint x="857.0" y="225.0"></omgdi:waypoint>
+        <omgdi:waypoint x="562.0" y="249.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="232.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

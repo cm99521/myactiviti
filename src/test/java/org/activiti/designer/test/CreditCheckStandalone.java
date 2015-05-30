@@ -15,11 +15,10 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricFormProperty;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.test.ActivitiRule;
-import org.activiti.engine.test.Deployment;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -45,10 +44,6 @@ public class CreditCheckStandalone{
 	private TaskService taskService;
 
 	@Autowired
-	@Rule
-	public ActivitiRule activitiRule;
-
-	@Autowired
 	public HistoryService historyService;
 
 	@BeforeClass
@@ -57,11 +52,13 @@ public class CreditCheckStandalone{
 	}
 
 	@Test
-	@Deployment(resources = { "diagrams/creditcheck.bpmn" })
 	public void executeJavaService() throws Exception {
 
+		Deployment de = repositoryService.createDeployment()
+		.addClasspathResource("diagrams/creditcheck.bpmn").deploy();
+		
 		ProcessDefinition pd = repositoryService.createProcessDefinitionQuery()
-				.processDefinitionKey("creditCheck").singleResult();
+				.processDefinitionKey("creditCheck").deploymentId(de.getId()).singleResult();
 		List<FormProperty> formList = formService.getStartFormData(pd.getId())
 				.getFormProperties();
 		assertEquals(2, formList.size());
@@ -70,9 +67,9 @@ public class CreditCheckStandalone{
 		formProperties.put("customerNumber", "3433454");
 		formProperties.put("contractType", "c4");
 
-		formService.submitStartFormData(pd.getId(), formProperties);
+		ProcessInstance pi = formService.submitStartFormData(pd.getId(), formProperties);
 		List<HistoricDetail> historyVariables = historyService
-				.createHistoricDetailQuery().formProperties().list();
+				.createHistoricDetailQuery().formProperties().processInstanceId(pi.getId()).list();
 
 		assertNotNull(historyVariables);
 		assertEquals(2, historyVariables.size());

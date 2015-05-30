@@ -8,13 +8,15 @@
 		<class>com.viti.activiti.pojo.Book</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-
-			<property name="hibernate.connection.driver_class" value="org.h2.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:h2:mem:bookstore;DB_CLOSE_ON_EXIT=FALSE" />
-			<property name="hibernate.connection.username" value="sa" />
-			<property name="hibernate.connection.password" value="" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.connection.url" value="jdbc:mysql://192.168.31.102:3306/activiti-official?useUnicode=true&amp;characterEncoding=UTF-8" />
+			<property name="hibernate.connection.username" value="root" />
+			<property name="hibernate.connection.password" value="admin" />
 		</properties>
 	</persistence-unit>
 </persistence>

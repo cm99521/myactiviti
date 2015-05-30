@@ -15,11 +15,11 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricFormProperty;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.test.ActivitiRule;
-import org.activiti.engine.test.Deployment;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -44,9 +44,6 @@ public class PersonalCallStandalone{
 	@Autowired
 	private TaskService taskService;
 
-	@Autowired
-	@Rule
-	public ActivitiRule activitiRule;
 
 	@Autowired
 	public HistoryService historyService;
@@ -57,11 +54,14 @@ public class PersonalCallStandalone{
 	}
 
 	@Test
-	@Deployment(resources = { "diagrams/PersonalMobileContract.bpmn", "diagrams/creditcheck.bpmn" })
 	public void executeJavaService() throws Exception {
 
+		Deployment de = repositoryService.createDeployment()
+				.addClasspathResource("diagrams/PersonalMobileContract.bpmn").deploy();
+		
 		ProcessDefinition pd = repositoryService.createProcessDefinitionQuery()
-				.processDefinitionKey("personalMobileContract").singleResult();
+				.processDefinitionKey("personalMobileContract").deploymentId(de.getId()).singleResult();
+		
 		List<FormProperty> formList = formService.getStartFormData(pd.getId())
 				.getFormProperties();
 		assertEquals(2, formList.size());
@@ -70,9 +70,10 @@ public class PersonalCallStandalone{
 		formProperties.put("customerNumber", "11");
 		formProperties.put("contractType", "c4");
 
-		formService.submitStartFormData(pd.getId(), formProperties);
+		ProcessInstance pi = formService.submitStartFormData(pd.getId(), formProperties);
+		
 		List<HistoricDetail> historyVariables = historyService
-				.createHistoricDetailQuery().formProperties().list();
+				.createHistoricDetailQuery().formProperties().processInstanceId(pi.getId()).list();
 
 		assertNotNull(historyVariables);
 		assertEquals(2, historyVariables.size());
@@ -86,6 +87,7 @@ public class PersonalCallStandalone{
 				.get(1);
 		assertEquals("customerNumber", formProperty.getPropertyId());
 		assertEquals("11", formProperty.getPropertyValue());
+		
 
 
 	}

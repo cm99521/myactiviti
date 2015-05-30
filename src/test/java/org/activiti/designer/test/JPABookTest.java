@@ -16,10 +16,9 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.activiti.engine.test.ActivitiRule;
-import org.activiti.engine.test.Deployment;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,14 +30,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.viti.activiti.pojo.Book;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:spring-jpa-beans.xml")
-public class JPATest{
+@ContextConfiguration("classpath:spring-beans-jpa.xml")
+public class JPABookTest{
 
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	
-	Logger log = LoggerFactory.getLogger(JPATest.class);
+	Logger log = LoggerFactory.getLogger(JPABookTest.class);
 	@Autowired
 	private RuntimeService runtimeService;
 
@@ -50,17 +48,16 @@ public class JPATest{
 	@Autowired
 	private TaskService taskService;
 
-	@Autowired
-	@Rule
-	public ActivitiRule activitiRule;
 
 	@Autowired
 	public HistoryService historyService;
 
 
 	@Test
-	@Deployment(resources = { "diagrams/jpatest.bpmn" })
 	public void executeJavaService() throws Exception {
+		Deployment de = repositoryService.createDeployment()
+				.addClasspathResource("diagrams/jpatest.bpmn").deploy();
+		
 		Map<String, Object> processVars = new HashMap<String, Object>();
 		List<String> authorList = new ArrayList<String>();
 		authorList.add("Cliff");
@@ -68,9 +65,9 @@ public class JPATest{
 		
 		processVars.put("authorList", authorList);
 		
-		runtimeService.startProcessInstanceByKey("jpaTask", processVars);
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("jpaTask", processVars);
 		
-		Task task = taskService.createTaskQuery().singleResult();
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
 		
 		Map<String, String> formProps = new HashMap<String, String>();
 		formProps.put("bookTitle", "Action in Action");

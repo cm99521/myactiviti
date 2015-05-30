@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<activiti-version>5.14</activiti-version>
+		<activiti-version>5.16.1</activiti-version>
 		<spring.version>3.2.5.RELEASE</spring.version>
 		<hibernate.version>3.6.4.Final</hibernate.version>
 	</properties>
@@ -84,6 +84,12 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
 		</dependency>
 
 

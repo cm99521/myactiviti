@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="processListener" name="Process Listener" isExecutable="true">
+    <extensionElements>
+      <activiti:executionListener event="start" class="com.viti.activiti.listener.process.GossipAboutProcess"></activiti:executionListener>
+      <activiti:executionListener event="end" class="com.viti.activiti.listener.process.GossipAboutProcess"></activiti:executionListener>
+    </extensionElements>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <scriptTask id="bradLeavesHouseTask" name="Brand Leave the House" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <extensionElements>
+        <activiti:executionListener event="start" expression="${gossipActivity.gossipStart(execution)}"></activiti:executionListener>
+        <activiti:executionListener event="end" expression="${gossipActivity.gossipEnd(execution)}"></activiti:executionListener>
+      </extensionElements>
+      <script>out:println "Brad leaves the house";</script>
+    </scriptTask>
+    <userTask id="bradHasADrinkTask" name="Brand has a drink" activiti:assignee="brand">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${gossipUserTask.gossipTask(task, task.eventName)}"></activiti:taskListener>
+        <activiti:taskListener event="assignment" expression="${gossipUserTask.gossipTask(task, task.eventName)}"></activiti:taskListener>
+        <activiti:taskListener event="complete" expression="${execution.setVariable('readyDrinking', true)}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="bradLeavesHouseTask">
+      <extensionElements>
+        <activiti:executionListener event="take" expression="${gossipTransition.gossip(execution)}"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="bradLeavesHouseTask" targetRef="bradHasADrinkTask"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="bradHasADrinkTask" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_processListener">
+    <bpmndi:BPMNPlane bpmnElement="processListener" id="BPMNPlane_processListener">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="50.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="640.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="bradLeavesHouseTask" id="BPMNShape_bradLeavesHouseTask">
+        <omgdc:Bounds height="55.0" width="111.0" x="160.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="bradHasADrinkTask" id="BPMNShape_bradHasADrinkTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="330.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="85.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="160.0" y="167.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="271.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="167.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="435.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

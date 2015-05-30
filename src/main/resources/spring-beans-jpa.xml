@@ -4,44 +4,46 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 				http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy"> 
+		<property name="targetDataSource"> <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"> 
+		<property name="driverClass" value="org.h2.Driver" /> <property name="url" 
+		value="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000" /> <property name="username" 
+		value="sa" /> <property name="password" value="" /> </bean> </property> </bean> -->
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
 		<property name="targetDataSource">
 			<bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-				<property name="driverClass" value="org.h2.Driver" />
-				<property name="url" value="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000" />
-				<property name="username" value="sa" />
-				<property name="password" value="" />
+				<property name="driverClass" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://192.168.31.102:3306/activiti-official?useUnicode=true&amp;characterEncoding=UTF-8" />
+				<property name="username" value="root" />
+				<property name="password" value="admin" />
 			</bean>
 		</property>
 	</bean>
-
-
 	<bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-	   <property name="persistenceUnitManager" ref="persistenceUnitManager"/>
+		<property name="persistenceUnitManager" ref="persistenceUnitManager"/>
 	</bean>
 	
 	<bean id="persistenceUnitManager" class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
-	   <property name="persistenceXmlLocation">
-	       <value>classpath:jpa-persistence.xml</value>
-	   </property>
+		<property name="persistenceXmlLocation">
+			<value>classpath:jpa-persistence.xml</value>
+		</property>
 	</bean>
-	
-	
-	
 
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
-		<property name="databaseType" value="h2" />
+		<!-- <property name="databaseType" value="mysql" /> -->
 		<property name="dataSource" ref="dataSource" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
-		<property name="history" value="full" />
+		<property name="history" value="full"/>
 		<property name="jpaEntityManagerFactory" ref="entityManagerFactory"/>
 		<property name="jpaHandleTransaction" value="true"/>
 		<property name="jpaCloseEntityManager" value="true"/>
@@ -70,7 +72,15 @@
 	<bean id="formService" factory-bean="processEngine"
 		factory-method="getFormService" />
 
+	<bean id="identityService" factory-bean="processEngine"
+		factory-method="getIdentityService" />
 
 
-	<bean id="bookService" class="com.viti.activiti.service.BookService" />
+
+	<bean id="orderService" class="com.viti.activiti.service.OrderService" />
+	<bean id="mailService" class="com.viti.activiti.service.MailService" />
+	<bean id="bookService" class="com.viti.activiti.service.BookService"/>
+	<bean id="gossipTransition" class="com.viti.activiti.listener.transition.GossipAboutTransition"/>
+	<bean id="gossipActivity" class="com.viti.activiti.listener.activity.GossipAboutActivity"/>
+	<bean id="gossipUserTask" class="com.viti.activiti.listener.usertask.GossipAboutUserTask"/>
 </beans>

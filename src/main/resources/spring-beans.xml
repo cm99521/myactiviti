@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-				http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy"> 
-		<property name="targetDataSource"> <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"> 
-		<property name="driverClass" value="org.h2.Driver" /> <property name="url" 
-		value="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000" /> <property name="username" 
-		value="sa" /> <property name="password" value="" /> </bean> </property> </bean> -->
 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
@@ -16,12 +23,13 @@
 			<bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 				<property name="driverClass" value="com.mysql.jdbc.Driver" />
 				<property name="url"
-					value="jdbc:mysql://192.168.31.102:3306/activiti-official?useUnicode=true&amp;characterEncoding=UTF-8" />
+					value="jdbc:mysql://192.168.136.186:3306/demo?useUnicode=true&amp;characterEncoding=UTF-8" />
 				<property name="username" value="root" />
 				<property name="password" value="admin" />
 			</bean>
 		</property>
 	</bean>
+
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -33,7 +41,7 @@
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
-		<property name="history" value="full"/>
+		<property name="history" value="full" />
 
 	</bean>
 
@@ -66,4 +74,23 @@
 
 	<bean id="orderService" class="com.viti.activiti.service.OrderService" />
 	<bean id="mailService" class="com.viti.activiti.service.MailService" />
+
+
+	<!-- unit test环境 -->
+	<beans profile="test">
+		<context:property-placeholder
+			ignore-resource-not-found="true"
+			location="classpath:/application.properties,
+					  classpath:/application.local.properties" />
+
+		<jdbc:embedded-database id="dataSource" type="H2">
+			<jdbc:script
+				location="classpath:org/activiti/db/create/activiti.h2.create.engine.sql" />
+			<jdbc:script
+				location="classpath:org/activiti/db/create/activiti.h2.create.history.sql" />
+			<jdbc:script
+				location="classpath:org/activiti/db/create/activiti.h2.create.identity.sql" />
+		</jdbc:embedded-database>
+
+	</beans>
 </beans>

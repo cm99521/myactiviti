@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="com.mcc">
+  <process id="multiInstanes" name="Multi Instances Paral" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <scriptTask id="scripttask1" name="Script Task" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <script>out:println "hello world"</script>
+    </scriptTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="scripttask2"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="scripttask2" targetRef="scripttask1"></sequenceFlow>
+    <scriptTask id="scripttask2" name="User Task" scriptFormat="groovy" activiti:autoStoreVariables="false">
+      <extensionElements>
+        <activiti:executionListener event="start" class="com.viti.activiti.listener.usertask.TL1"></activiti:executionListener>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="userList" activiti:elementVariable="user">
+        <completionCondition>${nrOfCompletedInstances&gt;2}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+      <script>out:println "do"</script>
+    </scriptTask>
+    <serviceTask id="mailtask1" name="Mail Task" activiti:type="mail">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:string><![CDATA[736110274@qq.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:string><![CDATA[hello mcc]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="cc">
+          <activiti:string><![CDATA[cliff.ma@unistacks.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="bcc">
+          <activiti:string><![CDATA[736110274@qq.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="charset">
+          <activiti:string><![CDATA[utf-8]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:string><![CDATA[<h1>hello</h1>
+<select><option>p1</option><option>p2</option></select>]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow4" sourceRef="scripttask1" targetRef="mailtask1"></sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="mailtask1" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_multiInstanes">
+    <bpmndi:BPMNPlane bpmnElement="multiInstanes" id="BPMNPlane_multiInstanes">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="60.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="590.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="390.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="mailtask1" id="BPMNShape_mailtask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="370.0" y="280.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="95.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="190.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="295.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="442.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="422.0" y="280.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="422.0" y="280.0"></omgdi:waypoint>
+        <omgdi:waypoint x="607.0" y="195.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

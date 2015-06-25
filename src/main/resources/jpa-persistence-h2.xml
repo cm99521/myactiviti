@@ -13,10 +13,10 @@
 			<property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             
-			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:mysql://192.168.31.102:3306/demo?useUnicode=true&amp;characterEncoding=UTF-8" />
-			<property name="hibernate.connection.username" value="root" />
-			<property name="hibernate.connection.password" value="admin" />
+			<property name="hibernate.connection.driver_class" value="org.h2.Driver" />
+			<property name="hibernate.connection.url" value="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000" />
+			<property name="hibernate.connection.username" value="sa" />
+			<property name="hibernate.connection.password" value="" />
 		</properties>
 	</persistence-unit>
 </persistence>
